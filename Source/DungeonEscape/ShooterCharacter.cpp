@@ -1,4 +1,5 @@
 // Fill out your copyright notice in the Description page of Project Settings.
+#include "ShooterCharacter.h"
 
 #include "GameFramework/PlayerController.h"
 #include "Engine/World.h"
@@ -9,7 +10,6 @@
 #include "MakeOpen.h"
 #include "GameFramework/Actor.h"
 #include "DungeonEscapeGameModeBase.h"
-#include "ShooterCharacter.h"
 
 
 #define OUT
