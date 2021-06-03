@@ -5,6 +5,8 @@
 #include "Components/SceneComponent.h"
 #include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
+#include "HealthComponent.h"
+#include "ShooterCharacter.h"
 
 #define OUT
 
@@ -41,7 +43,6 @@ void AGun::PullTrigger()
 		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OnHitParticle, Hit.Location, ShotDirection.Rotation());
 
 		FPointDamageEvent DamageEvent(Damage, Hit, ShotDirection, nullptr);
-		//Hit.GetActor()->TakeDamage(Damage, DamageEvent, GetOwnerController(), this);
 	}
 }
 

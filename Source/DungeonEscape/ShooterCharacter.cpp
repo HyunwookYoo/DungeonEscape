@@ -19,14 +19,14 @@ AShooterCharacter::AShooterCharacter()
 {
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 }
 
 // Called when the game starts or when spawned
 void AShooterCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
-	//Health = MaxHealth;
 	
 	Gun = GetWorld()->SpawnActor<AGun>(GunClass);
 	GetMesh()->HideBoneByName(TEXT("weapon_r"), EPhysBodyOp::PBO_None);
@@ -57,11 +57,15 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 //float AShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
 //{
 //	float DamageToApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-//	DamageToApplied = FMath::Min(Health, DamageToApplied);
+//	float CurrentHealth = HealthComponent->GetHealth();
 //
-//	Health -= DamageToApplied;
+//	DamageToApplied = FMath::Min(CurrentHealth, DamageToApplied);
 //
-//	UE_LOG(LogTemp, Warning, TEXT("Health Remain: %f"), Health);
+//	CurrentHealth -= DamageToApplied;
+//
+//	HealthComponent->SetHealth(CurrentHealth);
+//
+//	UE_LOG(LogTemp, Warning, TEXT("Health Remain: %f"), CurrentHealth);
 //
 //	return DamageToApplied;
 //}
@@ -123,11 +127,6 @@ FHitResult AShooterCharacter::GetFirstPhysicsBodyInReach(FHitResult& Hit) const
 
 	return FHitResult();
 }
-
-//bool AShooterCharacter::IsDead() const
-//{
-//	return Health <= 0;
-//}
 
 FVector AShooterCharacter::GetPlayerReach() const
 {

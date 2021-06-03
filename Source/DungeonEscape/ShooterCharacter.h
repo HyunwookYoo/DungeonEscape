@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "GameFramework/Character.h"
+#include "HealthComponent.h"
 #include "ShooterCharacter.generated.h"
 
 class AGun;
@@ -30,6 +31,8 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	UHealthComponent* GetHealthComponent() const { return HealthComponent; }
+
 	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	void Shoot();
@@ -49,14 +52,8 @@ private:
 	UPROPERTY()
 	AGun* Gun;
 
-	/*UPROPERTY(EditDefaultsOnly)
-	float MaxHealth = 100.f;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
-	float Health;
-
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	bool IsDead() const;*/
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
+	UHealthComponent* HealthComponent;
 
 	FHitResult GetFirstPhysicsBodyInReach(FHitResult& Hit) const;
 	float Reach = 250.f;
