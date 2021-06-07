@@ -12,11 +12,10 @@
 AProjectile::AProjectile()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile Mesh"));
-	//ProjectileMesh->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
-	RootComponent = ProjectileMesh;
+	SetRootComponent(ProjectileMesh);
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->InitialSpeed = MovementSpeed;
@@ -31,28 +30,8 @@ AProjectile::AProjectile()
 void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
+
+	UGameplayStatics::PlaySoundAtLocation(this, LaunchSound, GetActorLocation());
 }
 
 
-// Called every frame
-void AProjectile::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComponent, FVector NormalImpulse, const FHitResult& Hit)
-{
-	AActor* MyOwner = GetOwner();
-	if (!ensure(MyOwner != nullptr)) return;
-
-	if (OtherActor && OtherActor != this && OtherActor != MyOwner)
-	{
-		UGameplayStatics::ApplyDamage(OtherActor, Damage, MyOwner->GetInstigatorController(), this, DamageType);
-		//FVector ShotDirection;
-		//FPointDamageEvent DamageEvent(Damage, Hit, ShotDirection, nullptr);
-		//OtherActor->TakeDamage(Damage, FDamageEvent::FDamageEvent(), GetOwner()->GetInstigatorController(), this);
-	}
-
-	Destroy();
-}

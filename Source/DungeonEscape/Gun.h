@@ -6,8 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "Gun.generated.h"
 
-class UParticleSystem;
-class USoundBase;
+class AProjectile;
 
 UCLASS()
 class DUNGEONESCAPE_API AGun : public AActor
@@ -31,25 +30,12 @@ private:
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* Root = nullptr;
 
-	UPROPERTY(EditAnywhere)
-	UParticleSystem* ParticleEffect = nullptr;
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* BulletSpawnPoint;
 
-	UPROPERTY(EditAnywhere)
-	UParticleSystem* OnHitParticle = nullptr;
+	UPROPERTY(VisibleDefaultsOnly, Category = "Muzzle Effect")
+	UParticleSystem* MuzzleEffect;
 
-	UPROPERTY(EditAnywhere)
-	USoundBase* MuzzleSound = nullptr;
-
-	UPROPERTY(EditAnywhere)
-	USoundBase* OnHitSound = nullptr;
-
-	UPROPERTY(EditAnywhere)
-	float MaxRange = 1000.f;
-
-	UPROPERTY(EditAnywhere)
-	float Damage = 20.f;
-
-	bool GunTrace(FHitResult& Hit, FVector& ShotDirection);
-
-	AController* GetOwnerController() const;
+	UPROPERTY(EditDefaultsOnly, Category = "Bullet")
+	TSubclassOf<AProjectile> Bullet;
 };

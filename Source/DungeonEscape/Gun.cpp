@@ -3,10 +3,10 @@
 
 #include "Components/SkeletalMeshComponent.h"
 #include "Components/SceneComponent.h"
-#include "DrawDebugHelpers.h"
 #include "Kismet/GameplayStatics.h"
 #include "HealthComponent.h"
 #include "ShooterCharacter.h"
+#include "Projectile.h"
 
 #define OUT
 
@@ -21,58 +21,29 @@ AGun::AGun()
 
 	GunMesh = CreateDefaultSubobject<USkeletalMeshComponent>(TEXT("Gun Mesh"));
 	GunMesh->SetupAttachment(Root);
+
+	BulletSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("BulletSpawnPoint"));
+	BulletSpawnPoint->SetupAttachment(GunMesh);
 }
 
 // Called when the game starts or when spawned
 void AGun::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+
 }
 
 void AGun::PullTrigger()
 {
-	UGameplayStatics::SpawnEmitterAttached(ParticleEffect, GunMesh, TEXT("MuzzleFlashSocket"));
-	UGameplayStatics::SpawnSoundAttached(MuzzleSound, GunMesh, TEXT("MuzzleFlashSocket"));
-
-	FHitResult Hit;
-	FVector ShotDirection;
-
-	if (GunTrace(Hit, ShotDirection))
+	if (Bullet)
 	{
-		UGameplayStatics::SpawnEmitterAtLocation(GetWorld(), OnHitParticle, Hit.Location, ShotDirection.Rotation());
-
-		FPointDamageEvent DamageEvent(Damage, Hit, ShotDirection, nullptr);
+		UGameplayStatics::SpawnEmitterAttached(MuzzleEffect, GunMesh, TEXT("MuzzleFlashSocket"));
+		FVector SpawnLocation = BulletSpawnPoint->GetComponentLocation();
+		FRotator SpawnRotation = BulletSpawnPoint->GetComponentRotation();
+		AProjectile* Temp = GetWorld()->SpawnActor<AProjectile>(Bullet, SpawnLocation, SpawnRotation);
+		Temp->SetOwner(this);
 	}
-}
-
-bool AGun::GunTrace(FHitResult& Hit, FVector& ShotDirection)
-{
-	AController* Controller = GetOwnerController();
-	if (!ensure(Controller != nullptr)) return false;
-
-	FVector PlayerViewpointLocation;
-	FRotator PlayerViewpointRotation;
-	Controller->GetPlayerViewPoint(OUT PlayerViewpointLocation, OUT PlayerViewpointRotation);
-	FVector End = PlayerViewpointLocation + (PlayerViewpointRotation.Vector() * MaxRange);
-
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActor(this);
-	Params.AddIgnoredActor(GetOwner());
-
-	ShotDirection = -PlayerViewpointRotation.Vector();
-
-	DrawDebugLine(GetWorld(), PlayerViewpointLocation, End, FColor::Red, true);
-
-	return GetWorld()->LineTraceSingleByChannel(Hit, PlayerViewpointLocation, End, ECollisionChannel::ECC_GameTraceChannel2,Params);
-}
-
-AController* AGun::GetOwnerController() const
-{
-	APawn* OwnerPawn = Cast<APawn>(GetOwner());
-	if (!ensure(OwnerPawn != nullptr)) return nullptr;
-
-	return OwnerPawn->GetController();
 }
 
 
