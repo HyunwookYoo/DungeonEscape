@@ -20,6 +20,8 @@ public:
 	void SetHealth(float HealthToSet) { Health = HealthToSet; }
 
 
+	UFUNCTION(BlueprintCallable, BlueprintPure)
+	bool IsDead() const;
 protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
@@ -34,7 +36,5 @@ private:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, meta = (AllowPrivateAccess = "true"))
 	float Health = 0.f;
 
-	UFUNCTION(BlueprintCallable, BlueprintPure)
-	bool IsDead() const;
 		
 };

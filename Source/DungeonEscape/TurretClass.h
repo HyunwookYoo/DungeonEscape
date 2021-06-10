@@ -10,6 +10,9 @@ class UCapsuleComponent;
 class UStaticMeshComponent;
 class USceneComponent;
 class AProjectile;
+class UHealthComponent;
+class UParticleSystem;
+class USoundBase;
 
 UCLASS()
 class DUNGEONESCAPE_API ATurretClass : public APawn
@@ -29,14 +32,16 @@ protected:
 
 private:	
 	// Components
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Turret")
 	UCapsuleComponent* CapsuleComponent = nullptr;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Turret")
 	UStaticMeshComponent* TurretBody = nullptr;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Turret")
 	UStaticMeshComponent* TurretHead = nullptr;
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY(VisibleAnywhere, Category = "Turret")
 	USceneComponent* ProjectileSpawnPoint = nullptr;
+	UPROPERTY(VisibleAnywhere, Category = "Health")
+	UHealthComponent* HealthComponent;
 	
 	// Variables
 	FTimerHandle FireRateHandle;
@@ -47,8 +52,15 @@ private:
 	float FireRate = 3.f;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Combat", meta = (AllowPrivateAccess = "ture"))
 	TSubclassOf<AProjectile> ProjectileClass;
+	UPROPERTY(EditAnywhere, Category = "Effect", meta = (AllowPrivateAccess = "meta"))
+	UParticleSystem* DestroyParticle;
+	UPROPERTY(EditAnywhere, Category = "Effect", meta = (AllowPrivateAccess = "meta"))
+	USoundBase* DeathSound;
+	UPROPERTY(EditAnywhere, Category = "Effect", meta = (AllowPrivateAccess = "meta"))
+	TSubclassOf<UMatineeCameraShake> CameraShake;
 
 	// Functions
 	void RotateTurretHead(FVector LookAtTarget);
 	void Fire();
+	void TurretDestroy();
 };

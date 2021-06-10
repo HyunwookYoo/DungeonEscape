@@ -9,6 +9,7 @@
 #include "Kismet/GameplayStatics.h"
 #include "GameFramework/Character.h"
 #include "Projectile.h"
+#include "HealthComponent.h"
 
 // Sets default values
 ATurretClass::ATurretClass()
@@ -27,6 +28,8 @@ ATurretClass::ATurretClass()
 
 	ProjectileSpawnPoint = CreateDefaultSubobject<USceneComponent>(TEXT("Projectile Spawn Point"));
 	ProjectileSpawnPoint->SetupAttachment(TurretHead);
+
+	HealthComponent = CreateDefaultSubobject<UHealthComponent>(TEXT("HealthComponent"));
 }
 
 // Called when the game starts or when spawned
@@ -46,6 +49,10 @@ void ATurretClass::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 
 	RotateTurretHead(PlayerCharacter->GetActorLocation());
+	if (HealthComponent->IsDead())
+	{
+		TurretDestroy();
+	}
 }
 
 void ATurretClass::RotateTurretHead(FVector LookAtTarget)
@@ -66,4 +73,12 @@ void ATurretClass::Fire()
 		AProjectile* TempProjectile = GetWorld()->SpawnActor<AProjectile>(ProjectileClass, SpawnLocation, SpawnRotation);
 		TempProjectile->SetOwner(this);
 	}
+}
+
+void ATurretClass::TurretDestroy()
+{
+	UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	UGameplayStatics::SpawnEmitterAtLocation(this, DestroyParticle, GetActorLocation());
+	GetWorld()->GetFirstPlayerController()->ClientPlayCameraShake(CameraShake);
+	Destroy();
 }
