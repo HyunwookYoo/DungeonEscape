@@ -33,7 +33,7 @@ public:
 
 	UHealthComponent* GetHealthComponent() const { return HealthComponent; }
 
-	//virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, struct FDamageEvent const& DamageEvent, class AController* EventInstigator, AActor* DamageCauser) override;
 
 	void Shoot();
 

@@ -7,6 +7,7 @@
 #include "Gun.generated.h"
 
 class AProjectile;
+class UBoxComponent;
 
 UCLASS()
 class DUNGEONESCAPE_API AGun : public AActor

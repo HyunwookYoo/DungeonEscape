@@ -54,21 +54,21 @@ void AShooterCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCo
 	PlayerInputComponent->BindAction(TEXT("Shoot"), EInputEvent::IE_Pressed, this, &AShooterCharacter::Shoot);
 }
 
-//float AShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
-//{
-//	float DamageToApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-//	float CurrentHealth = HealthComponent->GetHealth();
-//
-//	DamageToApplied = FMath::Min(CurrentHealth, DamageToApplied);
-//
-//	CurrentHealth -= DamageToApplied;
-//
-//	HealthComponent->SetHealth(CurrentHealth);
-//
-//	UE_LOG(LogTemp, Warning, TEXT("Health Remain: %f"), CurrentHealth);
-//
-//	return DamageToApplied;
-//}
+float AShooterCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser)
+{
+	float DamageToApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	float CurrentHealth = HealthComponent->GetHealth();
+
+	DamageToApplied = FMath::Min(CurrentHealth, DamageToApplied);
+
+	CurrentHealth -= DamageToApplied;
+
+	HealthComponent->SetHealth(CurrentHealth);
+
+	UE_LOG(LogTemp, Warning, TEXT("Health Remain: %f"), CurrentHealth);
+
+	return DamageToApplied;
+}
 
 void AShooterCharacter::MoveForward(float Axis)
 {

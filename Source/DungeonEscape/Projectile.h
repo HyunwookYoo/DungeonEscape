@@ -9,6 +9,7 @@
 class UProjectileMovementComponent;
 class UStaticMeshComponent;
 class USoundBase;
+class UBoxComponent;
 
 UCLASS()
 class DUNGEONESCAPE_API AProjectile : public AActor
@@ -19,16 +20,22 @@ public:
 	// Sets default values for this actor's properties
 	AProjectile();
 
+	UFUNCTION()
+	void OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:	
+	UPROPERTY(VisibleAnywhere)
+	UBoxComponent* BoxCollision;
+
 	UPROPERTY(VisibleDefaultsOnly, BlueprintReadOnly, meta = (AllowPrivateAccess = "true"))
 	UStaticMeshComponent* ProjectileMesh;
 
 	UPROPERTY(VisibleDefaultsOnly)
-	UProjectileMovementComponent* ProjectileMovement = nullptr;
+	UProjectileMovementComponent* ProjectileMovement;
 
 	UPROPERTY(EditDefaultsOnly, Category = "Effects")
 	UParticleSystemComponent* TrailParticleSystem;
@@ -47,4 +54,7 @@ private:
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage", meta = (AllowPrivateAccess = "true"))
 	float Damage = 50.f;
+
+	UPROPERTY(VisibleAnywhere, Category = "Damage")
+	TSubclassOf<UDamageType> DamageTypeClass;
 };

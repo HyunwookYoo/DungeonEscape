@@ -7,6 +7,8 @@
 #include "Components/StaticMeshComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Particles/ParticleSystemComponent.h"
+#include "Components/BoxComponent.h"
+#include "ShooterCharacter.h"
 
 // Sets default values
 AProjectile::AProjectile()
@@ -14,8 +16,16 @@ AProjectile::AProjectile()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
+	BoxCollision = CreateDefaultSubobject<UBoxComponent>(TEXT("BoxCollision"));
+	SetRootComponent(BoxCollision);
+	BoxCollision->SetCollisionObjectType(ECollisionChannel::ECC_WorldDynamic);
+	BoxCollision->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	BoxCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_Pawn, ECollisionResponse::ECR_Block);
+	BoxCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldDynamic, ECollisionResponse::ECR_Block);
+	BoxCollision->SetCollisionResponseToChannel(ECollisionChannel::ECC_WorldStatic, ECollisionResponse::ECR_Block);
+
 	ProjectileMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Projectile Mesh"));
-	SetRootComponent(ProjectileMesh);
+	ProjectileMesh->SetupAttachment(GetRootComponent());
 
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->InitialSpeed = MovementSpeed;
@@ -23,7 +33,7 @@ AProjectile::AProjectile()
 	InitialLifeSpan = 3.f;
 
 	TrailParticleSystem = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("Trail Particle"));
-	TrailParticleSystem->SetupAttachment(RootComponent);
+	TrailParticleSystem->SetupAttachment(GetRootComponent());
 }
 
 // Called when the game starts or when spawned
@@ -31,7 +41,20 @@ void AProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	BoxCollision->OnComponentHit.AddDynamic(this, &AProjectile::OnHit);
+
 	UGameplayStatics::PlaySoundAtLocation(this, LaunchSound, GetActorLocation());
 }
 
+void AProjectile::OnHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
+{
+	if (!ensure(OtherActor != nullptr)) return;
+
+	AShooterCharacter* Main = Cast<AShooterCharacter>(OtherActor);
+	if (Main == nullptr) return;
+
+	UGameplayStatics::ApplyDamage(Main, Damage, nullptr, this, DamageTypeClass);
+
+	Destroy();
+}
 
