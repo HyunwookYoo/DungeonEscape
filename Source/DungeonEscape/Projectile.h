@@ -10,6 +10,7 @@ class UProjectileMovementComponent;
 class UStaticMeshComponent;
 class USoundBase;
 class UBoxComponent;
+class AGun;
 
 UCLASS()
 class DUNGEONESCAPE_API AProjectile : public AActor
@@ -55,6 +56,12 @@ private:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Damage", meta = (AllowPrivateAccess = "true"))
 	float Damage = 50.f;
 
-	UPROPERTY(VisibleAnywhere, Category = "Damage")
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	TSubclassOf<UDamageType> DamageTypeClass;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Gun")
+	TSubclassOf<AGun> GunClass;
+
+	UPROPERTY()
+	AGun* Gun;
 };

@@ -25,11 +25,11 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	UPROPERTY(VisibleAnywhere)
+	USceneComponent* Root;
+
 	UPROPERTY(EditAnywhere)
 	USkeletalMeshComponent* GunMesh = nullptr;
-
-	UPROPERTY(VisibleAnywhere)
-	USceneComponent* Root = nullptr;
 
 	UPROPERTY(VisibleAnywhere)
 	USceneComponent* BulletSpawnPoint;
